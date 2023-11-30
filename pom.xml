@@ -12,20 +12,22 @@
   <name>Sample Project</name>
 
   <properties>
-    <assertj.version>3.24.1</assertj.version>
+    <assertj.version>3.24.2</assertj.version>
     <dependency-check-maven.version>7.3.0</dependency-check-maven.version>
-    <jacoco.version>0.8.8</jacoco.version>
+    <jacoco.version>0.8.11</jacoco.version>
     <java.version>17</java.version>
-    <junit-jupiter.version>5.9.2</junit-jupiter.version>
-    <log4j2.version>2.19.0</log4j2.version>
-    <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    <maven-enforcer-plugin.version>3.1.0</maven-enforcer-plugin.version>
-    <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
-    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-    <mockito.version>5.0.0</mockito.version>
-    <pitest-maven.version>1.9.10</pitest-maven.version>
-    <pitest-junit5-plugin.version>1.1.0</pitest-junit5-plugin.version>
-    <slf4j.version>2.0.6</slf4j.version>
+    <junit-jupiter.version>5.10.1</junit-jupiter.version>
+    <log4j2.version>2.22.0</log4j2.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+    <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
+    <maven-failsafe-plugin.version>3.2.2</maven-failsafe-plugin.version>
+    <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+    <mockito.version>5.7.0</mockito.version>
+    <pitest-maven.version>1.15.3</pitest-maven.version>
+    <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
+    <slf4j.version>2.0.9</slf4j.version>
+    <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version>
+
     <!--
     Other properties
     -->
@@ -149,6 +151,7 @@
 
                     <!-- do not allow other logging implementations (commons-logging is needed for log4j-jcl) -->
                     <exclude>log4j:log4j</exclude> <!-- this is version 1.x, 2.x is used -->
+                    <exclude>ch.qos.reload4j:reload4j</exclude> <!-- this is a fork of log4j 1.x -->
                     <exclude>ch.qos.logback:*</exclude> <!-- logback should not be used at all since it's an implementation -->
                   </excludes>
                 </bannedDependencies>
@@ -173,7 +176,15 @@
           </execution>
         </executions>
       </plugin>
-
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${versions-maven-plugin.version}</version>
+        <configuration>
+          <rulesUri>file://${user.dir}/maven-version-rules.xml</rulesUri>
+          <generateBackupPoms>false</generateBackupPoms>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -199,6 +210,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${maven-failsafe-plugin.version}</version>
+        <configuration>
+          <!-- Do not use @ for the property since you won't be able to run the test from IntelliJ -->
+          <!--suppress UnresolvedMavenProperty -->
+          <argLine>${failsafe.jacoco.args}</argLine>
+          <systemPropertyVariables>
+            <!-- any changes here should also be made to the surefire section to keep Intellij happy -->
+          </systemPropertyVariables>
+        </configuration>
         <executions>
           <execution>
             <goals>
@@ -212,6 +231,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
+        <configuration>
+          <!-- Do not use @ for the property since you won't be able to run the test from IntelliJ -->
+          <!--suppress UnresolvedMavenProperty -->
+          <argLine>${surefire.jacoco.args}</argLine>
+          <systemPropertyVariables>
+            <!-- defining property here makes sure Intellij picks it up when using their test runner -->
+          </systemPropertyVariables>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -238,4 +265,3 @@
     </profile>
   </profiles>
 </project>
-  
