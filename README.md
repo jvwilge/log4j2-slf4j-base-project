@@ -1,9 +1,9 @@
 # log4j2-slf4j-base-project
 Basic Maven project with :
-- Java 12 
+- Java 25
 - Log4j2 (and log4j2 bridges configured correctly)
    - Version 1.4.x+ of Logback implies the use of the `jakarta.*` namespace instead of `javax.*`
-- JUnit 5, Mockito and AssertJ
+- JUnit 6, Mockito and AssertJ
 - Plugins configured for PIT, Jacoco, Enforcer, Failsafe and Surefire
 - Owasp dependency check (when using maven profile `cve`)
 
